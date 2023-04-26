@@ -130,6 +130,10 @@ class AlbumsRepository
 
     # result = DatabaseConnection.exec_params(sql, params)
   end
+
+  def create(album) # album is an instance of the Album class
+    # sql 
+  end
 end
 ```
 

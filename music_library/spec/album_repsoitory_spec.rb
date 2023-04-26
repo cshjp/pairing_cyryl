@@ -1,4 +1,5 @@
 require 'album_repository'
+#require 'album'
 
 describe AlbumsRepository do
 
@@ -39,5 +40,22 @@ describe AlbumsRepository do
     expect(album.title).to eq 'The Click' # =>  'Neotheater'
     expect(album.release_year).to eq '2017' # =>  '2019'
     expect(album.artist_id).to eq '1' # =>  1
+  end
+
+  it 'creates new entry in albums table' do
+    repo = AlbumsRepository.new
+    new_album = Album.new
+    new_album.title = 'OK ORCHESTRA'
+    new_album.release_year = '2021'
+    new_album.artist_id = '1'
+    repo.create(new_album)
+    all_albums = repo.all
+    expect(all_albums).to include(
+      have_attributes(
+        title: 'OK ORCHESTRA',
+        release_year: new_album.release_year,
+        artist_id: new_album.artist_id
+      )
+    )
   end
 end
