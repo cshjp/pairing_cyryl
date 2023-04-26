@@ -121,6 +121,15 @@ class AlbumsRepository
 
     # Returns an array of Student objects.
   end
+
+  def find(id)
+
+    # sql = SELECT title, release_year, artist_id FROM albums WHERE id = $1;
+
+    # params = [id]
+
+    # result = DatabaseConnection.exec_params(sql, params)
+  end
 end
 ```
 
@@ -146,7 +155,16 @@ albums.first.title # =>  'Neotheater'
 albums.first.release_year # =>  '2019'
 albums.first.artist_id # =>  1
 
+# 2
+# Find album from database
 
+repo = AlbumsRepository.new
+
+album = repo.find(1)
+album.id # => 1
+album.title # =>  'Neotheater'
+album.release_year # =>  '2019'
+album.artist_id # =>  1
 ```
 
 Encode this example as a test.
