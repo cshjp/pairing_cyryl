@@ -60,12 +60,12 @@ Usually, the Model class name will be the capitalised table name (single instead
 
 # Model class
 # (in lib/student.rb)
-class Student
+class Post
 end
 
 # Repository class
 # (in lib/student_repository.rb)
-class StudentRepository
+class PostRepository
 end
 ```
 
@@ -80,10 +80,10 @@ Define the attributes of your Model class. You can usually map the table columns
 # Model class
 # (in lib/student.rb)
 
-class Student
+class Post
 
   # Replace the attributes by your own columns.
-  attr_accessor :id, :name, :cohort_name
+  attr_accessor :id, :title, :content, :views, :user_account_id
 end
 
 # The keyword attr_accessor is a special Ruby feature
@@ -110,13 +110,13 @@ Using comments, define the method signatures (arguments and return value) and wh
 # Repository class
 # (in lib/student_repository.rb)
 
-class StudentRepository
+class PostRepository
 
   # Selecting all records
   # No arguments
   def all
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students;
+    # SELECT id, title, content, views, user_account_id FROM posts;
 
     # Returns an array of Student objects.
   end
@@ -125,21 +125,25 @@ class StudentRepository
   # One argument: the id (number)
   def find(id)
     # Executes the SQL query:
-    # SELECT id, name, cohort_name FROM students WHERE id = $1;
+    # SELECT id, title, content, views, user_account_id FROM posts WHERE id = $1;
 
     # Returns a single Student object.
   end
 
   # Add more methods below for each operation you'd like to implement.
 
-  # def create(student)
-  # end
+  def create(post)
+  # INSERT INTO posts (title, content, views, user_account_id) VALUES ($1, $2, $3, $4);
+
+  end
 
   # def update(student)
   # end
 
-  # def delete(student)
-  # end
+  def delete(id)
+   # DELETE FROM posts WHERE id = $1;
+
+  end
 end
 ```
 
@@ -155,32 +159,57 @@ These examples will later be encoded as RSpec tests.
 # 1
 # Get all students
 
-repo = StudentRepository.new
+repo = PostRepository.new
 
-students = repo.all
+post = repo.all
 
-students.length # =>  2
+expect(post.length).to eq 2
+expect(post[0].id).to eq 1
+expect(post[0].title).to eq 'title'
+expect(post[0].content).to eq 'content'
+expect(post[0].views).to eq 5
+expect(post[0].user_account_id).to eq 1
 
-students[0].id # =>  1
-students[0].name # =>  'David'
-students[0].cohort_name # =>  'April 2022'
 
-students[1].id # =>  2
-students[1].name # =>  'Anna'
-students[1].cohort_name # =>  'May 2022'
 
 # 2
 # Get a single student
 
-repo = StudentRepository.new
+repo = PostRepository.new
 
-student = repo.find(1)
+post = repo.find(1)
 
-student.id # =>  1
-student.name # =>  'David'
-student.cohort_name # =>  'April 2022'
+expect(post.id).to eq 1
+expect(post.title).to eq 'title'
+expect(post.content).to eq 'content'
+expect(post.views).to eq 5
+expect(post.user_account_id).to eq 1
 
-# Add more examples for each method
+# 3
+# create post
+
+
+repo = PostRepository.new
+post = Post.new
+post.title = "ode to onions"
+post.content = "like orges onions have layers, just like no one really knows an onions deepest layer, no one understands me"
+post.views = 1003
+post.user_account_id = 2
+repo.create(post)
+expect(repo.all).to include(
+  have_attributes(
+    title: post.title
+    content: post.content
+    views: post.views
+  )
+)
+
+# 4
+# deleting a post
+
+repo = PostRepository.new
+repo.delete(1)
+expect(repo.all.length).to eq 1
 ```
 
 Encode this example as a test.
@@ -196,15 +225,15 @@ This is so you get a fresh table contents every time you run the test suite.
 
 # file: spec/student_repository_spec.rb
 
-def reset_students_table
-  seed_sql = File.read('spec/seeds_students.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'students' })
+def reset_posts_table
+  seed_sql = File.read('spec/seeds_useraccounts.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'social_network_test' })
   connection.exec(seed_sql)
 end
 
 describe StudentRepository do
   before(:each) do 
-    reset_students_table
+    reset_posts_table
   end
 
   # (your tests will go here).

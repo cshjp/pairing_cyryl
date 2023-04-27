@@ -8,3 +8,4 @@ TRUNCATE TABLE posts RESTART IDENTITY;
 INSERT INTO user_accounts (email_address, username) VALUES ('cg@makers', 'CyrylG');
 INSERT INTO user_accounts (email_address, username) VALUES ('cp@makers', 'cshjp');
 INSERT INTO posts (title, content, views, user_account_id) VALUES ('title', 'content', 5, 1);
+INSERT INTO posts (title, content, views, user_account_id) VALUES ('no one can see me', 'alone', 0, 2);
